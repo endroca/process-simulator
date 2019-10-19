@@ -6,14 +6,20 @@ sio = socketio.Client()
     IO
 """
 state = ''
-y = [0, 0]
-x = [0, 0]
+lastError = 0
+integral = 0
+
+Kp = 1
+Ki = Kp*2
+Kd = Kp*1/2
+dt = 0.1
 
 
 def stateController(value):
-    global x, state
+    global error, state, integral
     if state != value:
-        x = [0, 0]
+        error = [0]
+        integral = 0
         state = value
 
 
@@ -24,18 +30,23 @@ def on_message(data):
 
 
 def process(data):
+    global lastError, integral, dt
+
     if data['type'] == 'ma':
         action = data['action']
         stateController('ma')
     else:
         stateController('')
-        x.append(data['action'])
-        y.append(y[-2] + 11.1 * x[-1] - 19.8 * x[-2] + 9.1 * x[-3])
+        error = data['action']
+        
+        integral = integral + Ki * error * dt
+        
+        #derivative = Kd * (error - lastError) / dt
+        #lastError = error
 
-        action = y[-1]
+        pid = (Kp * error) + integral
 
-        del x[0]
-        del y[0]
+        action = pid
 
     sio.emit('read', action, namespace='/controller')
 

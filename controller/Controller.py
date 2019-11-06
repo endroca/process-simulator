@@ -41,10 +41,10 @@ def process(data):
         
         integral = integral + Ki * error * dt
         
-        #derivative = Kd * (error - lastError) / dt
-        #lastError = error
+        derivative = Kd * (error - lastError) / dt
+        lastError = error
 
-        pid = (Kp * error) + integral
+        pid = (Kp * error) + integral + derivative
 
         action = pid
 

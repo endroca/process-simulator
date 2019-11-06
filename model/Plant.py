@@ -50,8 +50,8 @@ if __name__ == '__main__':
 
         ax.clear()
         ax.plot(timer, Y, color='b', label="Signal")
-        ax.plot(timer, X, color='r', label="Input")
-        ax.set_ylim(Y[-1] - 1, X[-1] + 1)
+        #ax.plot(timer, X, color='r', label="Input")
+        ax.set_ylim(Y[-1] - 1, Y[-1] + 1)
 
         sio.emit('read', Y[-1], namespace='/plant')
 
